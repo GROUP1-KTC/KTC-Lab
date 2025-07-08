@@ -1,35 +1,66 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import TemperatureInput from "./components/TemperatureInput";
 
-function App() {
-  const [count, setCount] = useState(0)
+const App = () => {
+  const [celsius, setCelsius] = useState(0);
+  const [fahrenheit, setFahrenheit] = useState(32);
+  const [kelvin, setKelvin] = useState(273.15);
+
+  const round = (num: number) => Math.round(num * 100) / 100;
+
+  const handleCelsiusChange = (value: string) => {
+    const c = parseFloat(value);
+    if (isNaN(c)) return;
+    setCelsius(c);
+    setFahrenheit(round((c * 9) / 5 + 32));
+    setKelvin(round(c + 273.15));
+  };
+
+  const handleFahrenheitChange = (value: string) => {
+    const f = parseFloat(value);
+    if (isNaN(f)) return;
+    setFahrenheit(f);
+    const c = ((f - 32) * 5) / 9;
+    setCelsius(round(c));
+    setKelvin(round(c + 273.15));
+  };
+
+  const handleKelvinChange = (value: string) => {
+    const k = parseFloat(value);
+    if (isNaN(k)) return;
+    setKelvin(k);
+    const c = k - 273.15;
+    setCelsius(round(c));
+    setFahrenheit(round((c * 9) / 5 + 32));
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-100 to-blue-300">
+      <div className="bg-white p-8 rounded-xl shadow-lg text-center w-[450px]">
+        <h1 className="text-2xl font-bold mb-6">Temperature Converter</h1>
+        <div className="flex gap-4 justify-center">
+          <TemperatureInput
+            label="Celsius"
+            unit="°C"
+            value={celsius}
+            onChange={handleCelsiusChange}
+          />
+          <TemperatureInput
+            label="Fahrenheit"
+            unit="°F"
+            value={fahrenheit}
+            onChange={handleFahrenheitChange}
+          />
+          <TemperatureInput
+            label="Kelvin"
+            unit="°K"
+            value={kelvin}
+            onChange={handleKelvinChange}
+          />
+        </div>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    </div>
+  );
+};
 
-export default App
+export default App;
