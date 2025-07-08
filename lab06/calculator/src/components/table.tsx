@@ -1,7 +1,7 @@
 import React from "react";
 import { useState } from "react";
 
-function Table() {
+const Table: React.FC = () => {
     const [input, setInput] = useState<string>("0");
     const [prevValue, setPrevValue] = useState<string>("");
     const [operator, setOperator] = useState<string>("");
@@ -13,7 +13,7 @@ function Table() {
     const handleOperator = (op: string) => {
         if (input !== "") {
             setPrevValue(input);
-            setInput("");
+            setInput("0");
             setOperator(op);
         }
     };
@@ -22,6 +22,14 @@ function Table() {
         setInput("0");
         setPrevValue("");
         setOperator("");
+    };
+
+    const handleToggleSign = () => {
+        if (input !== "0") {
+            setInput((prev) =>
+                prev.startsWith("-") ? prev.slice(1) : "-" + prev
+            );
+        }
     };
 
     const handleCalculate = () => {
@@ -62,10 +70,35 @@ function Table() {
                     {input}
                 </div>
                 <div className="grid grid-cols-4 gap-2">
-                    {["7", "8", "9", "/"].map((btn) => (
+                    {["AC", "+/-", "%", "/"].map((btn) => (
                         <button
                             key={btn}
-                            className="p-4 bg-blue-500 text-white rounded hover:bg-blue-600"
+                            className={
+                                btn === "/"
+                                    ? "p-4 bg-orange-400 text-white rounded hover:bg-orange-500"
+                                    : "p-4 bg-gray-400 text-white rounded hover:bg-gray-500"
+                            }
+                            onClick={() =>
+                                btn.match(/[0-9]/)
+                                    ? handleNumber(btn)
+                                    : btn === "AC"
+                                    ? handleClear()
+                                    : btn === "+/-"
+                                    ? handleToggleSign()
+                                    : handleOperator(btn)
+                            }
+                        >
+                            {btn}
+                        </button>
+                    ))}
+                    {["7", "8", "9", "*"].map((btn) => (
+                        <button
+                            key={btn}
+                            className={
+                                btn === "*"
+                                    ? "p-4 bg-orange-400 text-white rounded hover:bg-orange-500"
+                                    : "p-4 bg-gray-400 text-white rounded hover:bg-gray-500"
+                            }
                             onClick={() =>
                                 btn.match(/[0-9]/)
                                     ? handleNumber(btn)
@@ -75,10 +108,14 @@ function Table() {
                             {btn}
                         </button>
                     ))}
-                    {["4", "5", "6", "*"].map((btn) => (
+                    {["4", "5", "6", "+"].map((btn) => (
                         <button
                             key={btn}
-                            className="p-4 bg-blue-500 text-white rounded hover:bg-blue-600"
+                            className={
+                                btn === "+"
+                                    ? "p-4 bg-orange-400 text-white rounded hover:bg-orange-500"
+                                    : "p-4 bg-gray-400 text-white rounded hover:bg-gray-500"
+                            }
                             onClick={() =>
                                 btn.match(/[0-9]/)
                                     ? handleNumber(btn)
@@ -91,7 +128,11 @@ function Table() {
                     {["1", "2", "3", "-"].map((btn) => (
                         <button
                             key={btn}
-                            className="p-4 bg-blue-500 text-white rounded hover:bg-blue-600"
+                            className={
+                                btn === "-"
+                                    ? "p-4 bg-orange-400 text-white rounded hover:bg-orange-500"
+                                    : "p-4 bg-gray-400 text-white rounded hover:bg-gray-500"
+                            }
                             onClick={() =>
                                 btn.match(/[0-9]/)
                                     ? handleNumber(btn)
@@ -101,37 +142,30 @@ function Table() {
                             {btn}
                         </button>
                     ))}
-                    {["0", ".", "=", "+"].map((btn) => (
-                        <button
-                            key={btn}
-                            className="p-4 bg-blue-500 text-white rounded hover:bg-blue-600"
-                            onClick={() =>
-                                btn === "="
-                                    ? handleCalculate()
-                                    : btn === "."
-                                    ? handleNumber(btn)
-                                    : handleOperator(btn)
-                            }
-                        >
-                            {btn}
-                        </button>
-                    ))}
                     <button
-                        className="p-4 bg-red-500 text-white rounded hover:bg-red-600 col-span-2"
-                        onClick={handleClear}
+                        className="p-4 bg-gray-400 text-white rounded hover:bg-gray-500 col-span-2"
+                        onClick={handleNumber.bind(null, "0")}
                     >
-                        C
+                        0
                     </button>
+
                     <button
-                        className="p-4 bg-blue-500 text-white rounded hover:bg-blue-600 col-span-2"
-                        onClick={() => handleOperator("%")}
+                        className="p-4 bg-gray-400 text-white rounded hover:bg-gray-500"
+                        onClick={() => handleNumber(".")}
                     >
-                        %
+                        .
+                    </button>
+
+                    <button
+                        className="p-4 bg-orange-400 text-white rounded hover:bg-orange-500"
+                        onClick={() => handleCalculate()}
+                    >
+                        =
                     </button>
                 </div>
             </div>
         </div>
     );
-}
+};
 
 export default Table;
